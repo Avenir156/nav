@@ -799,7 +799,7 @@
 
             for (var i = 0; i < pageData.length; i++) {
                 var item = pageData[i];
-                var actualRank = startIdx + i + 1;
+                var actualRank = searchQuery ? item.rank : (startIdx + i + 1);
                 var rankClass = 'rank-other';
                 if (actualRank === 1) rankClass = 'rank-1';
                 else if (actualRank === 2) rankClass = 'rank-2';
