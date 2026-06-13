@@ -732,7 +732,7 @@
             if (!searchQuery) return sorted;
 
             var query = searchQuery.toLowerCase();
-            return sorted.filter(function(item) {
+            var filtered = sorted.filter(function(item) {
                 if (item.name && item.name.toLowerCase().indexOf(query) !== -1) return true;
                 if (item.brand && item.brand.toLowerCase().indexOf(query) !== -1) return true;
                 if (item.specs && item.specs.some(function(s) { return s.toLowerCase().indexOf(query) !== -1; })) return true;
@@ -740,6 +740,19 @@
                 if (item.fullContent && item.fullContent.toLowerCase().indexOf(query) !== -1) return true;
                 return false;
             });
+
+            // Attach global rank from sorted position (so search results show original rank)
+            if (!cfg.isArticle) {
+                var rankMap = {};
+                for (var ri = 0; ri < sorted.length; ri++) {
+                    rankMap[sorted[ri].name] = ri + 1;
+                }
+                for (var fi = 0; fi < filtered.length; fi++) {
+                    filtered[fi]._searchRank = rankMap[filtered[fi].name] || (fi + 1);
+                }
+            }
+
+            return filtered;
         }
 
         // ===== Render =====
@@ -799,7 +812,7 @@
 
             for (var i = 0; i < pageData.length; i++) {
                 var item = pageData[i];
-                var actualRank = searchQuery ? item.rank : (startIdx + i + 1);
+                var actualRank = searchQuery ? (item._searchRank || startIdx + i + 1) : (startIdx + i + 1);
                 var rankClass = 'rank-other';
                 if (actualRank === 1) rankClass = 'rank-1';
                 else if (actualRank === 2) rankClass = 'rank-2';
@@ -1121,9 +1134,6 @@
                     this.classList.add('active');
                     currentCategory = this.getAttribute('data-category');
                     currentPage = 1;
-                    searchQuery = '';
-                    document.getElementById('searchInput').value = '';
-                    document.getElementById('searchCount').textContent = '';
                     render();
                 });
             }
