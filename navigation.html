@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的导航</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,400;9..144,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #faf9f7;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b6b6b;
+            --text-muted: #9a9a9a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-light: #dbeafe;
+            --border: #e5e5e5;
+            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f0f12;
+            --bg-secondary: #18181c;
+            --bg-card: #1e1e24;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a1a1a6;
+            --text-muted: #6b6b70;
+            --accent: #60a5fa;
+            --accent-hover: #93c5fd;
+            --accent-light: #1e3a5f;
+            --border: #2a2a30;
+            --shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background var(--transition), color var(--transition);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            transition: all var(--transition);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 480px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .theme-toggle {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* Main */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .category-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Links Grid */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .link-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .link-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .link-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .link-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .link-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .link-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .link-url {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Add Button */
+        .add-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-hover);
+            transition: all var(--transition);
+        }
+
+        .add-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            width: 90%;
+            max-width: 440px;
+            transform: scale(0.95);
+            transition: transform var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header-inner {
+                flex-wrap: wrap;
+            }
+            .search-container {
+                order: 3;
+                max-width: 100%;
+            }
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            .add-btn {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .link-card {
+            animation: fadeIn 0.4s ease backwards;
+        }
+
+        .link-card:nth-child(1) { animation-delay: 0.05s; }
+        .link-card:nth-child(2) { animation-delay: 0.1s; }
+        .link-card:nth-child(3) { animation-delay: 0.15s; }
+        .link-card:nth-child(4) { animation-delay: 0.2s; }
+        .link-card:nth-child(5) { animation-delay: 0.25s; }
+        .link-card:nth-child(6) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">我的导航</div>
+            <div class="search-container">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索网址...">
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="切换主题">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="categories" id="categories"></div>
+        <div class="links-grid" id="linksGrid"></div>
+    </main>
+
+    <button class="add-btn" id="addBtn" title="添加网址">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+        </svg>
+    </button>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 class="modal-title" id="modalTitle">添加网址</h2>
+            <div class="form-group">
+                <label class="form-label">名称</label>
+                <input type="text" class="form-input" id="inputName" placeholder="例如：GitHub">
+            </div>
+            <div class="form-group">
+                <label class="form-label">网址</label>
+                <input type="url" class="form-input" id="inputUrl" placeholder="https://github.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">描述</label>
+                <input type="text" class="form-input" id="inputDesc" placeholder="简短描述（可选）">
+            </div>
+            <div class="form-group">
+                <label class="form-label">分类</label>
+                <select class="form-select" id="inputCategory">
+                    <option value="工作">工作</option>
+                    <option value="学习">学习</option>
+                    <option value="工具">工具</option>
+                    <option value="娱乐">娱乐</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="cancelBtn">取消</button>
+                <button class="btn btn-primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 数据管理
+        const STORAGE_KEY = 'nav_links';
+        const THEME_KEY = 'nav_theme';
+
+        // 示例数据
+        const defaultLinks = [
+            { id: 1, name: 'GitHub', url: 'https://github.com', desc: '全球最大的代码托管平台', category: '工作', icon: '🐙' },
+            { id: 2, name: 'Stack Overflow', url: 'https://stackoverflow.com', desc: '程序员问答社区', category: '学习', icon: '📚' },
+            { id: 3, name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'AI对话助手', category: '工具', icon: '🤖' },
+            { id: 4, name: 'Bilibili', url: 'https://bilibili.com', desc: '视频弹幕网站', category: '娱乐', icon: '📺' },
+            { id: 5, name: 'MDN Web Docs', url: 'https://developer.mozilla.org', desc: 'Web开发权威文档', category: '学习', icon: '📖' },
+            { id: 6, name: 'Canva', url: 'https://canva.com', desc: '在线设计工具', category: '工具', icon: '🎨' },
+        ];
+
+        // 获取链接数据
+        function getLinks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) return JSON.parse(stored);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultLinks));
+            return defaultLinks;
+        }
+
+        // 保存链接数据
+        function saveLinks(links) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+        }
+
+        // 获取所有分类
+        function getCategories(links) {
+            const cats = new Set(links.map(l => l.category));
+            return ['全部', ...cats];
+        }
+
+        // 渲染分类按钮
+        function renderCategories(activeCategory = '全部') {
+            const links = getLinks();
+            const categories = getCategories(links);
+            const container = document.getElementById('categories');
+            container.innerHTML = categories.map(cat => `
+                <button class="category-btn ${cat === activeCategory ? 'active' : ''}" data-category="${cat}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        // 获取网站图标
+        function getFavicon(url) {
+            try {
+                const domain = new URL(url).hostname;
+                return `https://www.google.com/s2/favicons?domain=${domain}&sz=40`;
+            } catch {
+                return null;
+            }
+        }
+
+        // 渲染链接卡片
+        function renderLinks(filter = { category: '全部', search: '' }) {
+            let links = getLinks();
+            
+            if (filter.category !== '全部') {
+                links = links.filter(l => l.category === filter.category);
+            }
+            
+            if (filter.search) {
+                const term = filter.search.toLowerCase();
+                links = links.filter(l => 
+                    l.name.toLowerCase().includes(term) || 
+                    l.desc.toLowerCase().includes(term) ||
+                    l.url.toLowerCase().includes(term)
+                );
+            }
+
+            const container = document.getElementById('linksGrid');
+            
+            if (links.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>没有找到相关网址</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = links.map(link => `
+                <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="link-card" data-id="${link.id}">
+                    <div class="link-header">
+                        <div class="link-icon">
+                            ${link.icon || `<img src="${getFavicon(link.url)}" width="24" height="24" onerror="this.style.display='none'">`}
+                        </div>
+                        <div class="link-title">${link.name}</div>
+                    </div>
+                    <div class="link-desc">${link.desc || ''}</div>
+                    <span class="link-tag">${link.category}</span>
+                    <div class="link-url">${link.url}</div>
+                </a>
+            `).join('');
+        }
+
+        // 主题切换
+        function initTheme() {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme === 'dark' ? 'dark' : '');
+            localStorage.setItem(THEME_KEY, newTheme);
+        }
+
+        // 模态框
+        let editingId = null;
+
+        function openModal(link = null) {
+            editingId = link ? link.id : null;
+            document.getElementById('modalTitle').textContent = link ? '编辑网址' : '添加网址';
+            document.getElementById('inputName').value = link ? link.name : '';
+            document.getElementById('inputUrl').value = link ? link.url : '';
+            document.getElementById('inputDesc').value = link ? link.desc : '';
+            document.getElementById('inputCategory').value = link ? link.category : '工作';
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            editingId = null;
+        }
+
+        function saveLink() {
+            const name = document.getElementById('inputName').value.trim();
+            const url = document.getElementById('inputUrl').value.trim();
+            const desc = document.getElementById('inputDesc').value.trim();
+            const category = document.getElementById('inputCategory').value;
+
+            if (!name || !url) {
+                alert('请填写名称和网址');
+                return;
+            }
+
+            let links = getLinks();
+            
+            if (editingId) {
+                links = links.map(l => l.id === editingId ? { ...l, name, url, desc, category } : l);
+            } else {
+                links.push({
+                    id: Date.now(),
+                    name,
+                    url,
+                    desc,
+                    category,
+                    icon: null
+                });
+            }
+
+            saveLinks(links);
+            closeModal();
+            renderCategories();
+            renderLinks();
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderCategories();
+            renderLinks();
+
+            // 搜索
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const activeCat = document.querySelector('.category-btn.active')?.dataset.category || '全部';
+                renderLinks({ category: activeCat, search: e.target.value });
+            });
+
+            // 分类切换
+            document.getElementById('categories').addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-btn')) {
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const search = document.getElementById('searchInput').value;
+                    renderLinks({ category: e.target.dataset.category, search });
+                }
+            });
+
+            // 主题切换
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+            // 添加按钮
+            document.getElementById('addBtn').addEventListener('click', () => openModal());
+
+            // 模态框
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            document.getElementById('saveBtn').addEventListener('click', saveLink);
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+
+            // 键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === '/' && e.target.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

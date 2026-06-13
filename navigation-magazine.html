@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAVIGATE — 我的导航</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Libre+Franklin:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8f6f3;
+            --bg-paper: #fffef9;
+            --text-display: #1a1a18;
+            --text-body: #2d2d2a;
+            --text-muted: #6a6a65;
+            --accent: #c41e3a;
+            --accent-light: #f5e6e8;
+            --border: #d4d4d0;
+            --line: #b8b8b4;
+            --shadow: 2px 2px 0 rgba(0,0,0,0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0d0d0c;
+            --bg-paper: #161614;
+            --text-display: #f5f5f0;
+            --text-body: #e0e0d8;
+            --text-muted: #7a7a75;
+            --accent: #e63946;
+            --accent-light: #2a1a1c;
+            --border: #2a2a28;
+            --line: #3a3a38;
+            --shadow: 2px 2px 0 rgba(255,255,255,0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Libre Franklin', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-body);
+            min-height: 100vh;
+            font-weight: 400;
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Magazine Header */
+        .masthead {
+            background: var(--bg-paper);
+            border-bottom: 3px solid var(--text-display);
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+
+        .masthead-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .magazine-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-display);
+            margin-bottom: 8px;
+        }
+
+        .magazine-subtitle {
+            font-family: 'Libre Franklin', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            padding: 8px 0;
+            display: inline-block;
+        }
+
+        .issue-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            font-family: inherit;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--text-display);
+            color: var(--bg-paper);
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: var(--bg-paper);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            background: var(--bg);
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--text-body);
+            width: 200px;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .search-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Main Content - Magazine Layout */
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Section Header */
+        .section-header {
+            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--text-display);
+            letter-spacing: 0.05em;
+        }
+
+        .section-line {
+            height: 1px;
+            background: var(--line);
+        }
+
+        /* Categories */
+        .categories-strip {
+            display: flex;
+            gap: 0;
+            margin-bottom: 40px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-tab {
+            padding: 12px 24px;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-right: 1px solid var(--border);
+            transition: all 0.2s;
+            background: var(--bg-paper);
+        }
+
+        .category-tab:last-child {
+            border-right: none;
+        }
+
+        .category-tab:hover {
+            color: var(--text-display);
+        }
+
+        .category-tab.active {
+            background: var(--text-display);
+            color: var(--bg-paper);
+        }
+
+        /* Magazine Grid */
+        .magazine-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            row-gap: 40px;
+        }
+
+        /* Article Card Styles */
+        .article-card {
+            background: var(--bg-paper);
+            border: 1px solid var(--border);
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .article-card:hover {
+            box-shadow: var(--shadow);
+            transform: translate(-2px, -2px);
+        }
+
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .article-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Featured Article - Large */
+        .article-featured {
+            grid-column: span 8;
+            grid-row: span 2;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-featured .article-category {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .article-featured .article-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-display);
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .article-featured .article-excerpt {
+            font-size: 1rem;
+            color: var(--text-body);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        .article-featured .article-url {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-style: italic;
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+        }
+
+        /* Medium Article */
+        .article-medium {
+            grid-column: span 4;
+        }
+
+        .article-medium .article-category {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-medium .article-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-display);
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .article-medium .article-excerpt {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        /* Small Article */
+        .article-small {
+            grid-column: span 3;
+            padding: 16px;
+        }
+
+        .article-small .article-category {
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .article-small .article-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-display);
+            line-height: 1.3;
+        }
+
+        /* Sidebar */
+        .sidebar-section {
+            grid-column: span 4;
+            background: var(--bg-paper);
+            border: 1px solid var(--border);
+            padding: 24px;
+        }
+
+        .sidebar-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-display);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-list {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-body);
+            cursor: pointer;
+            transition: color 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar-item:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Add Button */
+        .add-article-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: var(--text-display);
+            color: var(--bg-paper);
+            border: none;
+            padding: 16px 24px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .add-article-btn:hover {
+            background: var(--accent);
+            transform: translate(-2px, -2px);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-paper);
+            border: 2px solid var(--text-display);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-display);
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 12px;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-body);
+            background: var(--bg);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--text-display);
+            color: var(--bg-paper);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+        }
+
+        .btn-secondary {
+            background: none;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text-display);
+        }
+
+        /* Footer */
+        .magazine-footer {
+            background: var(--bg-paper);
+            border-top: 3px solid var(--text-display);
+            padding: 40px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .magazine-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            .article-featured {
+                grid-column: span 6;
+                grid-row: span 1;
+            }
+            .article-medium {
+                grid-column: span 3;
+            }
+            .article-small {
+                grid-column: span 2;
+            }
+            .sidebar-section {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .masthead-inner, .nav-inner, .content {
+                padding: 0 20px;
+            }
+            .magazine-grid {
+                grid-template-columns: 1fr;
+            }
+            .article-featured, .article-medium, .article-small, .sidebar-section {
+                grid-column: span 1;
+            }
+            .categories-strip {
+                flex-wrap: wrap;
+            }
+            .category-tab {
+                flex: 1;
+                text-align: center;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .article-card {
+            animation: fadeIn 0.5s ease backwards;
+        }
+
+        .article-card:nth-child(1) { animation-delay: 0.1s; }
+        .article-card:nth-child(2) { animation-delay: 0.15s; }
+        .article-card:nth-child(3) { animation-delay: 0.2s; }
+        .article-card:nth-child(4) { animation-delay: 0.25s; }
+        .article-card:nth-child(5) { animation-delay: 0.3s; }
+        .article-card:nth-child(6) { animation-delay: 0.35s; }
+    </style>
+</head>
+<body>
+    <!-- Masthead -->
+    <header class="masthead">
+        <div class="masthead-inner">
+            <h1 class="magazine-title">NAVIGATE</h1>
+            <span class="magazine-subtitle">Personal Collection & Curated Links</span>
+            <div class="issue-info">
+                <span>Vol. 01 — 个人导航</span>
+                <button class="theme-toggle" id="themeToggle">切换主题</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-inner">
+            <div class="search-box">
+                <span class="search-label">搜索</span>
+                <input type="text" id="searchInput" placeholder="输入关键词...">
+            </div>
+            <span class="search-label">按 / 快速搜索</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+        <div class="section-header">
+            <span class="section-number">01</span>
+            <h2 class="section-title">收藏精选</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="categories-strip" id="categories"></div>
+
+        <div class="magazine-grid" id="linksGrid"></div>
+    </main>
+
+    <!-- Add Button -->
+    <button class="add-article-btn" id="addBtn">+ 新增</button>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 class="modal-header" id="modalTitle">新增链接</h2>
+            <div class="form-field">
+                <label class="form-label">标题</label>
+                <input type="text" class="form-input" id="inputName" placeholder="链接名称">
+            </div>
+            <div class="form-field">
+                <label class="form-label">网址</label>
+                <input type="url" class="form-input" id="inputUrl" placeholder="https://...">
+            </div>
+            <div class="form-field">
+                <label class="form-label">描述</label>
+                <input type="text" class="form-input" id="inputDesc" placeholder="简短描述">
+            </div>
+            <div class="form-field">
+                <label class="form-label">分类</label>
+                <select class="form-select" id="inputCategory">
+                    <option value="工作">工作</option>
+                    <option value="学习">学习</option>
+                    <option value="工具">工具</option>
+                    <option value="娱乐">娱乐</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="cancelBtn">取消</button>
+                <button class="btn btn-primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="magazine-footer">
+        <p class="footer-text">© 2026 NAVIGATE — 个人导航收藏</p>
+    </footer>
+
+    <script>
+        const STORAGE_KEY = 'nav_links';
+        const THEME_KEY = 'nav_theme';
+
+        const defaultLinks = [
+            { id: 1, name: 'GitHub', url: 'https://github.com', desc: '全球最大的代码托管平台，开源项目的家园。在这里发现、分享、协作。', category: '工作' },
+            { id: 2, name: 'Stack Overflow', url: 'https://stackoverflow.com', desc: '程序员问答社区，解决技术问题的首选之地。', category: '学习' },
+            { id: 3, name: 'ChatGPT', url: 'https://chat.openai.com', desc: 'AI对话助手，智能问答与创作工具。', category: '工具' },
+            { id: 4, name: 'Bilibili', url: 'https://bilibili.com', desc: '视频弹幕网站，年轻人的文化社区。', category: '娱乐' },
+            { id: 5, name: 'MDN Web Docs', url: 'https://developer.mozilla.org', desc: 'Web开发权威文档，前端开发者必备。', category: '学习' },
+            { id: 6, name: 'Canva', url: 'https://canva.com', desc: '在线设计工具，轻松创建精美设计。', category: '工具' },
+            { id: 7, name: 'Notion', url: 'https://notion.so', desc: '笔记与协作工具，一站式工作空间。', category: '工作' },
+            { id: 8, name: 'Spotify', url: 'https://spotify.com', desc: '音乐流媒体平台，发现更多好音乐。', category: '娱乐' },
+        ];
+
+        function getLinks() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) return JSON.parse(stored);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultLinks));
+            return defaultLinks;
+        }
+
+        function saveLinks(links) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+        }
+
+        function getCategories(links) {
+            const cats = new Set(links.map(l => l.category));
+            return ['全部', ...cats];
+        }
+
+        function renderCategories(activeCategory = '全部') {
+            const links = getLinks();
+            const categories = getCategories(links);
+            const container = document.getElementById('categories');
+            container.innerHTML = categories.map(cat => `
+                <button class="category-tab ${cat === activeCategory ? 'active' : ''}" data-category="${cat}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function renderLinks(filter = { category: '全部', search: '' }) {
+            let links = getLinks();
+            
+            if (filter.category !== '全部') {
+                links = links.filter(l => l.category === filter.category);
+            }
+            
+            if (filter.search) {
+                const term = filter.search.toLowerCase();
+                links = links.filter(l => 
+                    l.name.toLowerCase().includes(term) || 
+                    l.desc.toLowerCase().includes(term) ||
+                    l.url.toLowerCase().includes(term)
+                );
+            }
+
+            const container = document.getElementById('linksGrid');
+            
+            if (links.length === 0) {
+                container.innerHTML = `
+                    <div class="sidebar-section" style="grid-column: span 12; text-align: center;">
+                        <p style="color: var(--text-muted); font-style: italic;">暂无相关链接</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Magazine layout: first link featured, rest in grid
+            let html = '';
+            
+            if (links.length > 0) {
+                const featured = links[0];
+                html += `
+                    <a href="${featured.url}" target="_blank" class="article-card article-featured">
+                        <span class="article-category">${featured.category}</span>
+                        <h3 class="article-title">${featured.name}</h3>
+                        <p class="article-excerpt">${featured.desc || ''}</p>
+                        <span class="article-url">${featured.url}</span>
+                    </a>
+                `;
+            }
+
+            // Sidebar with quick links
+            if (links.length > 1) {
+                html += `
+                    <div class="sidebar-section">
+                        <h4 class="sidebar-title">快速访问</h4>
+                        <div class="sidebar-list">
+                            ${links.slice(1, 5).map(link => `
+                                <a href="${link.url}" target="_blank" class="sidebar-item">
+                                    ${link.name}
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Medium cards
+            if (links.length > 5) {
+                links.slice(5, 7).forEach(link => {
+                    html += `
+                        <a href="${link.url}" target="_blank" class="article-card article-medium">
+                            <span class="article-category">${link.category}</span>
+                            <h3 class="article-title">${link.name}</h3>
+                            <p class="article-excerpt">${link.desc || ''}</p>
+                        </a>
+                    `;
+                });
+            }
+
+            // Small cards
+            if (links.length > 7) {
+                links.slice(7).forEach(link => {
+                    html += `
+                        <a href="${link.url}" target="_blank" class="article-card article-small">
+                            <span class="article-category">${link.category}</span>
+                            <h3 class="article-title">${link.name}</h3>
+                        </a>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme === 'dark' ? 'dark' : '');
+            localStorage.setItem(THEME_KEY, newTheme);
+        }
+
+        let editingId = null;
+
+        function openModal(link = null) {
+            editingId = link ? link.id : null;
+            document.getElementById('modalTitle').textContent = link ? '编辑链接' : '新增链接';
+            document.getElementById('inputName').value = link ? link.name : '';
+            document.getElementById('inputUrl').value = link ? link.url : '';
+            document.getElementById('inputDesc').value = link ? link.desc : '';
+            document.getElementById('inputCategory').value = link ? link.category : '工作';
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            editingId = null;
+        }
+
+        function saveLink() {
+            const name = document.getElementById('inputName').value.trim();
+            const url = document.getElementById('inputUrl').value.trim();
+            const desc = document.getElementById('inputDesc').value.trim();
+            const category = document.getElementById('inputCategory').value;
+
+            if (!name || !url) {
+                alert('请填写标题和网址');
+                return;
+            }
+
+            let links = getLinks();
+            
+            if (editingId) {
+                links = links.map(l => l.id === editingId ? { ...l, name, url, desc, category } : l);
+            } else {
+                links.push({
+                    id: Date.now(),
+                    name,
+                    url,
+                    desc,
+                    category
+                });
+            }
+
+            saveLinks(links);
+            closeModal();
+            renderCategories();
+            renderLinks();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderCategories();
+            renderLinks();
+
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const activeCat = document.querySelector('.category-tab.active')?.dataset.category || '全部';
+                renderLinks({ category: activeCat, search: e.target.value });
+            });
+
+            document.getElementById('categories').addEventListener('click', (e) => {
+                if (e.target.classList.contains('category-tab')) {
+                    document.querySelectorAll('.category-tab').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const search = document.getElementById('searchInput').value;
+                    renderLinks({ category: e.target.dataset.category, search });
+                }
+            });
+
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('addBtn').addEventListener('click', () => openModal());
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            document.getElementById('saveBtn').addEventListener('click', saveLink);
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeModal();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === '/' && e.target.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
